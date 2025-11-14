@@ -41,12 +41,21 @@ def format_data(res):
 
 
 def stream_data():
-    """Fetch and print a single formatted record (placeholder for Kafka push)."""
+    """Fetch and print a single formatted record (placeholder for Kafka push).
     user_payload = get_data()
     formatted = format_data(user_payload)
     print(json.dumps(formatted))
+    """
+    from kafka import KafkaProducer
+    res = get_data()
+    formatted = format_data(res)
 
-
+    producer = KafkaProducer(
+        bootstrap_servers=["localhost:9092"], max_block_ms=5000
+    )
+    producer.send(
+        "user_created", json.dumps(res).encode("utf-8"))
+'''
 with DAG(
     "user_automation",
     default_args=default_args,
@@ -58,7 +67,7 @@ with DAG(
         task_id="streaming_data_from_kafka",
         python_callable=stream_data,
     )
-
+'''
 
 if __name__ == "__main__":
     stream_data()
